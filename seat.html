@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>婚禮座位查詢</title>
+<style>
+  body {
+    font-family: "微軟正黑體", sans-serif;
+    background: #fff0f5;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+  }
+  .container {
+    background: #ffffff;
+    padding: 30px 40px;
+    border-radius: 20px;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+    text-align: center;
+    max-width: 400px;
+    width: 90%;
+  }
+  h1 {
+    color: #c71585;
+    margin-bottom: 20px;
+  }
+  input[type="text"] {
+    width: 80%;
+    padding: 10px;
+    border-radius: 10px;
+    border: 1px solid #ccc;
+    margin-bottom: 15px;
+    font-size: 16px;
+  }
+  button {
+    padding: 10px 20px;
+    background: #c71585;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-size: 16px;
+    cursor: pointer;
+  }
+  button:hover {
+    background: #ff1493;
+  }
+  #result {
+    margin-top: 20px;
+    font-size: 18px;
+    color: #333;
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <h1><<<新娘朋友座位查詢>>>如果輸入後找不到座位，一定是新娘又打錯字，請找人工帶位，謝謝您</h1>
+  <input type="text" id="nameInput" placeholder="請輸入姓名">
+  <br>
+  <button onclick="checkSeat()">查詢座位</button>
+  <div id="result"></div>
+</div>
+
+<script>
+// 這裡是你的座位表，格式：姓名 : 桌號 + 座位
+const seatMap = {"王淳立": "39桌",
+"王又卉": "31桌",
+"江筠漢": "38桌",
+"吳俊宇": "44桌",
+"吳歆惟": "32桌",
+"吳奕倫": "40桌",
+"吳蓁蓁": "31桌",
+"吳宜諠": "31桌",
+"吳典椅": "45桌",
+"吳律旻": "38桌",
+"呂偉成": "47桌",
+"李易真": "47桌",
+"李俊佑": "39桌",
+"李宜臻": "39桌",
+"李栅儒": "38桌",
+"沈玉祺": "44桌",
+"沈家豪": "30桌",
+"周欣瑩": "46桌",
+"周恩慈": "40桌",
+"林佩珍": "32桌",
+"林哲永": "46桌",
+"林皓榆": "33桌",
+"林家緯": "37桌",
+"林煥庭": "39桌",
+"林家琪": "31桌",
+"林璟淳": "31桌",
+"邱天保": "33桌",
+"邱彥智": "39桌",
+"邱俊傑": "45桌",
+"姚羿丞": "44桌",
+"柯宇澤": "30桌",
+"柯伶勵": "37桌",
+"范律萱": "31桌",
+"韋麗芳": "32桌",
+"送勝志": "47桌",
+"高敏傑": "32桌",
+"高欣汝": "30桌",
+"高銳芝": "45桌",
+"張宛庭": "46桌",
+"張雅淳": "40桌",
+"張惠君": "40桌",
+"張晉文": "30桌",
+"張詠筑": "30桌",
+"張文斌": "37桌",
+"張睿勝": "39桌",
+"張淼鑫": "31桌",
+"張敏盛": "1桌",
+"張尹馨": "1桌",
+"梁智鈞": "33桌",
+"許引臣": "32桌",
+"郭展熙": "37桌",
+"郭思妤": "31桌",
+"陳玉慈": "40桌",
+"陳怡靜": "30桌",
+"陳彥文": "33桌",
+"凱查": "47桌",
+"曾子科": "40桌",
+"游雅慧": "47桌",
+"程雅毓": "30桌",
+"黃映筑": "47桌",
+"黃懷萱": "37桌",
+"黃代宣": "45桌",
+"楊振傑": "33桌",
+"萬聞玲": "1桌",
+"葉政洋": "46桌",
+"雷晴安": "46桌",
+"廖偉傑": "44桌",
+"廖鐘文": "32桌",
+"廖顯倫": "33桌",
+"廖俞蕙": "38桌",
+"熊義翔": "33桌",
+"趙文琳": "46桌",
+"劉晏竹": "45桌",
+"蔣竣東": "38桌",
+"盧胤蓉": "32桌",
+"蕭梅君": "47桌",
+"賴婷瑀": "44桌",
+"龍欣瑜": "44桌",
+"龍昱丞": "31桌",
+"薛仲軒": "39桌",
+"謝宜玲": "38桌",
+"鍾盈臻": "33桌",
+"簡振育": "32桌",
+"簡瑜萱": "40桌",
+"簡于勝": "37桌",
+"顏佩瑜": "37桌",
+"關珉宜": "45桌",
+"籃若瑜": "30桌",
+"鐘新語": "30桌",
+
+
+
+"鄭玉枝": "29桌",
+"彰化姨": "29桌",
+"黃信雄": "29桌",
+"李浩森": "29桌",
+"賴燕玉": "29桌",
+"李品逸": "29桌",
+"施瑞明老婆": "29桌",
+"黃玉鳳": "29桌",
+"施麗華": "29桌",
+"施丁元": "29桌",
+"彭云瑄": "36桌",
+"吳姵橙": "36桌",
+"林秀虹": "36桌",
+"陳秀珍": "36桌",
+"柳宛吟": "36桌",
+"陳柏如": "36桌",
+"許元星": "36桌",
+"盧奕均": "36桌",
+"陳靖維": "36桌",
+"盧奕安": "36桌",
+"盧宜盈": "43桌",
+"盧冠勳": "43桌",
+"高若華": "43桌",
+"高禾富": "43桌",
+"溪州阿嬤": "43桌",
+"施木盤": "主桌桌",
+"賴明國": "主桌桌",
+"施秉豐": "主桌桌",
+"施瑞明": "主桌桌",
+"施玟伶": "主桌桌",
+  // 後續可繼續新增
+};
+
+function checkSeat() {
+  const name = document.getElementById("nameInput").value.trim();
+  const result = document.getElementById("result");
+
+  if(name === "") {
+    result.textContent = "請先輸入姓名";
+    result.style.color = "#c71585";
+    return;
+  }
+
+  if(seatMap[name]) {
+    result.textContent = `${name} 您的座位在：${seatMap[name]} 🎉`;
+    result.style.color = "#32cd32";
+  } else {
+    result.textContent = "新娘打錯字機率高，請找人工帶位。";
+    result.style.color = "#c71585";
+  }
+}
+</script>
+</body>
+</html>
